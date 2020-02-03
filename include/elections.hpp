@@ -1,10 +1,6 @@
 #include <eosio/eosio.hpp>
 #include <eosio/asset.hpp>
-#include <eosio/system.hpp>
-#include <eosio/permission.hpp>
 #include <eosio/singleton.hpp>
-#include <eosio/print.hpp>
-
 #include <external_structs.hpp>
 
 using namespace std;

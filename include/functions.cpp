@@ -18,28 +18,56 @@ bool elections::is_candidate(const name& cand){
 
 void elections::propagate_votes(vector<name> old_votes, vector<name> new_votes, uint64_t old_vote_weight, uint64_t new_vote_weight){
 
-    candidates_table _candidates(get_self(), get_self().value);
 
-    //loop through old votes and substract old weight
-    for(name cand : old_votes){
-      auto cand_itr = _candidates.find(cand.value);
-      if(cand_itr != _candidates.end() ){
-        _candidates.modify(cand_itr, same_payer, [&](auto& n) {
-            n.total_votes -= old_vote_weight;
-        });
-      }
-    }   
-    
-    //loop through new votes and add new weight
-    for(name cand : new_votes){
-      auto cand_itr2 = _candidates.find(cand.value);
 
-      if(cand_itr2 != _candidates.end() ){
-        _candidates.modify(cand_itr2, same_payer, [&](auto& n) {
-            n.total_votes += new_vote_weight;
-        });
-      }
-    }
+        candidates_table _candidates(get_self(), get_self().value);
+
+        //loop through old votes and substract old weight
+        for(name cand : old_votes){
+          auto cand_itr = _candidates.find(cand.value);
+          if(cand_itr != _candidates.end() ){
+            _candidates.modify(cand_itr, same_payer, [&](auto& n) {
+                uint64_t res = n.total_votes - old_vote_weight;
+                check(res <= n.total_votes, "vote weight underflow!");
+                n.total_votes = res;
+            });
+          }
+        }   
+        
+        //loop through new votes and add new weight
+        for(name cand : new_votes){
+          auto cand_itr2 = _candidates.find(cand.value);
+          if(cand_itr2 != _candidates.end() ){
+            _candidates.modify(cand_itr2, same_payer, [&](auto& n) {
+                uint64_t res = n.total_votes + new_vote_weight;
+                check(res >= n.total_votes, "vote weight overflow!");
+                n.total_votes = res;
+            });
+          }
+        }
+
+
+        //update state total_vote_weight
+        if(old_votes.size() || new_votes.size()){
+
+          state_table _state(get_self(), get_self().value);
+          auto s = _state.get_or_default(state() );
+
+          if(old_votes.size()){
+            //check underflow?
+            s.total_vote_weight -= old_vote_weight;
+          }
+          if(new_votes.size()){
+            //check overflow?
+            s.total_vote_weight += new_vote_weight;
+          }
+          
+          _state.set(s, get_self() );     
+        
+        }
+
+
+
 
 }
 

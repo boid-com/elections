@@ -162,6 +162,19 @@ ACTION elections::unregcand(name candidate){
   _candidates.erase(cand_itr);
 }
 
+ACTION elections::updatepay(name candidate, extended_asset new_pay){
+  require_auth(candidate);
+  candidates_table _candidates(get_self(), get_self().value);
+  auto cand_itr = _candidates.find(candidate.value);
+  check(cand_itr != _candidates.end(), "Candidate not found.");
+  mod_config conf = get_config();
+  check(conf.max_pay.quantity.amount > 0, "Payments not allowed.");
+  check(new_pay <= conf.max_pay, "Invalid pay.");//does this handle different symbol/contract?
+  _candidates.modify(cand_itr, same_payer, [&](auto& n) {
+    n.pay = new_pay;
+  });
+}
+
 ACTION elections::vote(name voter, vector<name> new_votes){
 
   //check if voter is eligible to vote
@@ -375,6 +388,31 @@ void elections::on_transfer(name from, name to, asset quantity, string memo){
 
   }
 
+}
+
+//def
+ACTION elections::clearcands(){
+    require_auth(get_self());
+    candidates_table _candidates(get_self(), get_self().value);
+    auto itr = _candidates.begin();
+    while(itr != _candidates.end() ) {
+        itr = _candidates.erase(itr);
+    }
+}
+
+ACTION elections::clearstate(){
+    require_auth(get_self());
+    state_table _state(get_self(), get_self().value);
+    _state.remove();
+}
+
+ACTION elections::clearvoters(){
+    require_auth(get_self());
+    voters_table _voters(get_self(), get_self().value);
+    auto itr = _voters.begin();
+    while(itr != _voters.end() ) {
+        itr = _voters.erase(itr);
+    }
 }
 
 

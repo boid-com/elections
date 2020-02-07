@@ -32,6 +32,10 @@
                 {
                     "name": "registered",
                     "type": "time_point_sec"
+                },
+                {
+                    "name": "pay",
+                    "type": "extended_asset"
                 }
             ]
         },
@@ -48,6 +52,21 @@
                     "type": "uint64"
                 }
             ]
+        },
+        {
+            "name": "clearcands",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "clearstate",
+            "base": "",
+            "fields": []
+        },
+        {
+            "name": "clearvoters",
+            "base": "",
+            "fields": []
         },
         {
             "name": "config",
@@ -260,6 +279,10 @@
                     "type": "uint64"
                 },
                 {
+                    "name": "total_vote_weight",
+                    "type": "uint64"
+                },
+                {
                     "name": "last_election",
                     "type": "time_point_sec"
                 }
@@ -300,6 +323,20 @@
                 {
                     "name": "remove",
                     "type": "bool"
+                }
+            ]
+        },
+        {
+            "name": "updatepay",
+            "base": "",
+            "fields": [
+                {
+                    "name": "candidate",
+                    "type": "name"
+                },
+                {
+                    "name": "new_pay",
+                    "type": "extended_asset"
                 }
             ]
         },
@@ -352,6 +389,21 @@
             "ricardian_contract": ""
         },
         {
+            "name": "clearcands",
+            "type": "clearcands",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "clearstate",
+            "type": "clearstate",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "clearvoters",
+            "type": "clearvoters",
+            "ricardian_contract": ""
+        },
+        {
             "name": "iweightupdat",
             "type": "iweightupdat",
             "ricardian_contract": ""
@@ -394,6 +446,11 @@
         {
             "name": "updateconf",
             "type": "updateconf",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "updatepay",
+            "type": "updatepay",
             "ricardian_contract": ""
         },
         {

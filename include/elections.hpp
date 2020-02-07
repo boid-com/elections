@@ -52,12 +52,17 @@ CONTRACT elections : public contract {
     ACTION regcand(name account);
     ACTION pausecampaig(name candidate, bool is_active);
     ACTION unregcand(name candidate);
+    ACTION updatepay(name candidate, extended_asset new_pay);
     ACTION vote(name voter, vector<name> new_votes);
 
     ACTION iweightupdat(name provider, name account, uint64_t new_weight);
 
     ACTION addelectorat(vector<name> voters);
     ACTION remelectorat(vector<name> voters);
+
+    ACTION clearcands();
+    ACTION clearstate();
+    ACTION clearvoters();
 
 
     ACTION openstake(name member, extended_asset stakeasset);
@@ -80,6 +85,7 @@ CONTRACT elections : public contract {
       uint64_t election_count=0;
       uint64_t active_candidate_count=0;
       uint64_t inactive_candidate_count=0;
+      uint64_t total_vote_weight=0;
       time_point_sec last_election = time_point_sec(0);
     };
     typedef eosio::singleton<"state"_n, state> state_table;
@@ -100,6 +106,7 @@ CONTRACT elections : public contract {
       uint64_t total_votes = 0;
       bool is_active = 0;
       time_point_sec registered;
+      extended_asset pay;
 
       auto primary_key() const { return cand.value; }
       uint64_t by_votes() const { return static_cast<uint64_t>(UINT64_MAX - total_votes);}
